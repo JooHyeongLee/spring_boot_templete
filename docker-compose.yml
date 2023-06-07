@@ -1,0 +1,42 @@
+version: '3'
+
+networks:
+  mynetwork:
+    driver: bridge
+
+services:
+  mysql:
+    image: mysql/mysql-server:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root # MySQL root password
+      MYSQL_DATABASE: root
+      MYSQL_USER: user # MySQL username
+      MYSQL_PASSWORD: user # MySQL password
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - '3306:3306'
+    container_name: mysql
+    volumes:
+      - ./mysql:/var/lib/mysql # {Local Path}:{Server:Path}
+
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4 # MySQL character set
+      - --collation-server=utf8mb4_unicode_ci # MySQL collation
+    cap_add:
+      - SYS_NICE
+      # issue
+      # mbind: Operation not permitted >> 오류로 인한 추가
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - mynetwork
+
