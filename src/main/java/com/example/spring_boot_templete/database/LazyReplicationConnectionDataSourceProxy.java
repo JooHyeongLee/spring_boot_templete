@@ -1,4 +1,4 @@
-package com.example.spring_boot_templete.common;
+package com.example.spring_boot_templete.database;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
